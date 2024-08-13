@@ -1,22 +1,26 @@
 import reflex as rx
-from ..backend.backend import State, Customer
+from ..backend.backend import Liquidacion, State, Liquidacion
 from ..components.form_field import form_field
 from ..components.status_badges import status_badge
 
 
-def show_customer(user: Customer):
+def show_customer(liquidacion: Liquidacion):
     """Show a customer in a table row."""
 
     return rx.table.row(
-        rx.table.cell(user.name),
-        rx.table.cell(user.email),
-        rx.table.cell(user.phone),
-        rx.table.cell(user.address),
-        rx.table.cell(f"${user.payments:,}"),
-        rx.table.cell(user.date),
+        rx.table.cell(liquidacion.id),
+        rx.table.cell(liquidacion.movil),
+        rx.table.cell(liquidacion.total),
+        rx.table.cell(liquidacion.gastos),
+        rx.table.cell(liquidacion.salario),
+        rx.table.cell(liquidacion.combustible),
+        rx.table.cell(liquidacion.extras),
+        rx.table.cell(liquidacion.liquido),
+        rx.table.cell(liquidacion.h13),
+        rx.table.cell(liquidacion.credito),
         rx.table.cell(
             rx.match(
-                user.status,
+                liquidacion.status,
                 ("Delivered", status_badge("Delivered")),
                 ("Pending", status_badge("Pending")),
                 ("Cancelled", status_badge("Cancelled")),
@@ -25,10 +29,10 @@ def show_customer(user: Customer):
         ),
         rx.table.cell(
             rx.hstack(
-                update_customer_dialog(user),
+                update_customer_dialog(liquidacion),
                 rx.icon_button(
                     rx.icon("trash-2", size=22),
-                    on_click=lambda: State.delete_customer(getattr(user, "id")),
+                    on_click=lambda: State.delete_customer(getattr(liquidacion, "id")),
                     size="2",
                     variant="solid",
                     color_scheme="red",
@@ -45,7 +49,7 @@ def add_customer_button() -> rx.Component:
         rx.dialog.trigger(
             rx.button(
                 rx.icon("plus", size=26),
-                rx.text("Add Customer", size="4", display=["none", "none", "block"]),
+                rx.text("Add Liquidacion", size="4", display=["none", "none", "block"]),
                 size="3",
             ),
         ),
@@ -78,33 +82,96 @@ def add_customer_button() -> rx.Component:
             ),
             rx.flex(
                 rx.form.root(
+                    # rx.flex(
+                    #     # Name
+                    #     form_field(
+                    #         "Nombre",
+                    #         "Customer Name",
+                    #         "text",
+                    #         "name",
+                    #         "user",
+                    #     ),
+                    #     # Email
+                    #     form_field(
+                    #         "Email", "user@reflex.dev", "email", "email", "mail"
+                    #     ),
+                    #     # Phone
+                    #     form_field("Phone", "Customer Phone", "tel", "phone", "phone"),
+                    #     # Address
+                    #     form_field(
+                    #         "Address",
+                    #         "Customer Address",
+                    #         "text",
+                    #         "address",
+                    #         "home"
+                    #     ),
+                    #     # Payments
+                    #     form_field(
+                    #         "Payment ($)",
+                    #         "Customer Payment",
+                    #         "number",
+                    #         "Total",
+                    #         "dollar-sign",
+                    #     ),
+
                     rx.flex(
                         # Name
                         form_field(
                             "Nombre",
                             "Customer Name",
-                            "text",
-                            "name",
+                            "number",
+                            "id",
                             "user",
                         ),
                         # Email
                         form_field(
-                            "Email", "user@reflex.dev", "email", "email", "mail"
+                            "Email",
+                            "user@reflex.dev",
+                            "number",
+                            "movil",
+                            "mail",
                         ),
                         # Phone
-                        form_field("Phone", "Customer Phone", "tel", "phone", "phone"),
-                        # Address
                         form_field(
-                            "Address", "Customer Address", "text", "address", "home"
+                            "Phone",
+                            "Customer Phone",
+                            "number",
+                            "total",
+                            "phone",
                         ),
-                        # Payments
+                        # otro
                         form_field(
                             "Payment ($)",
                             "Customer Payment",
                             "number",
-                            "payments",
+                            "combustible",
                             "dollar-sign",
                         ),
+                        # otro
+                        form_field(
+                            "Payment ($)",
+                            "Customer Payment",
+                            "number",
+                            "extras",
+                            "dollar-sign",
+                        ),
+                        # otro
+                        form_field(
+                            "Payment ($)",
+                            "Customer Payment",
+                            "number",
+                            "h13",
+                            "dollar-sign",
+                        ),
+                        # otro
+                        form_field(
+                            "Payment ($)",
+                            "Customer Payment",
+                            "number",
+                            "credito",
+                            "dollar-sign",
+                        ),
+                        
                         # Status
                         rx.vstack(
                             rx.hstack(
@@ -158,7 +225,7 @@ def add_customer_button() -> rx.Component:
     )
 
 
-def update_customer_dialog(user):
+def update_customer_dialog(liquidacion):
     return rx.dialog.root(
         rx.dialog.trigger(
             rx.button(
@@ -167,7 +234,7 @@ def update_customer_dialog(user):
                 color_scheme="blue",
                 size="2",
                 variant="solid",
-                on_click=lambda: State.get_user(user),
+                on_click=lambda: State.get_liquidacion(liquidacion),
             ),
         ),
         rx.dialog.content(
@@ -207,7 +274,7 @@ def update_customer_dialog(user):
                             "text",
                             "name",
                             "user",
-                            user.name,
+                            str(liquidacion.id),
                         ),
                         # Email
                         form_field(
@@ -216,7 +283,8 @@ def update_customer_dialog(user):
                             "email",
                             "email",
                             "mail",
-                            user.email,
+                            str(liquidacion.movil),
+                            # user.email,
                         ),
                         # Phone
                         form_field(
@@ -225,7 +293,8 @@ def update_customer_dialog(user):
                             "tel",
                             "phone",
                             "phone",
-                            user.phone,
+                            str(liquidacion.total),
+                            # user.phone,
                         ),
                         # Address
                         form_field(
@@ -234,7 +303,8 @@ def update_customer_dialog(user):
                             "text",
                             "address",
                             "home",
-                            user.address,
+                            str(liquidacion.gastos),
+                            # user.address,
                         ),
                         # Payments
                         form_field(
@@ -243,8 +313,55 @@ def update_customer_dialog(user):
                             "number",
                             "payments",
                             "dollar-sign",
-                            user.payments.to(str),
+                            str(liquidacion.salario)
+                            # user.payments.to(str),        
+                        ),                
+                        # otro
+                        form_field(
+                            "Payment ($)",
+                            "Customer Payment",
+                            "number",
+                            "payments",
+                            "dollar-sign",
+                            str(liquidacion.combustible),
                         ),
+                        # otro
+                        form_field(
+                            "Payment ($)",
+                            "Customer Payment",
+                            "number",
+                            "payments",
+                            "dollar-sign",
+                            str(liquidacion.extras),
+                        ),
+                        # otro
+                        form_field(
+                            "Payment ($)",
+                            "Customer Payment",
+                            "number",
+                            "payments",
+                            "dollar-sign",
+                            str(liquidacion.liquido),
+                        ),
+                        # otro
+                        form_field(
+                            "Payment ($)",
+                            "Customer Payment",
+                            "number",
+                            "payments",
+                            "dollar-sign",
+                            str(liquidacion.h13),
+                        ),
+                        # otro
+                        form_field(
+                            "Payment ($)",
+                            "Customer Payment",
+                            "number",
+                            "payments",
+                            "dollar-sign",
+                            str(liquidacion.credito),
+                        ),
+
                         # Status
                         rx.vstack(
                             rx.hstack(
@@ -255,7 +372,7 @@ def update_customer_dialog(user):
                             ),
                             rx.radio(
                                 ["Delivered", "Pending", "Cancelled"],
-                                default_value=user.status,
+                                default_value=liquidacion.status,
                                 name="status",
                                 direction="row",
                                 as_child=True,
@@ -357,17 +474,22 @@ def main_table():
         rx.table.root(
             rx.table.header(
                 rx.table.row(
-                    _header_cell("Nombre", "user"),
-                    _header_cell("Email", "mail"),
-                    _header_cell("Phone", "phone"),
-                    _header_cell("Address", "home"),
-                    _header_cell("Payments", "dollar-sign"),
+                    _header_cell("id", "user"),
+                    _header_cell("Móvil", "user"),
+                    _header_cell("Recaudación Total", "dollar-sign"),
+                    _header_cell("Salario", "dollar-sign"),
+                    _header_cell("Combustible", "dollar-sign"),
+                    _header_cell("Extras", "dollar-sign"),
+                    _header_cell("Gastos", "dollar-sign"),
+                    _header_cell("Líquido", "dollar-sign"),
+                    _header_cell("H13", "dollar-sign"),
+                    _header_cell("Crédito", "dollar-sign"),
                     _header_cell("Date", "calendar"),
                     _header_cell("Status", "truck"),
                     _header_cell("Actions", "cog"),
                 ),
             ),
-            rx.table.body(rx.foreach(State.users, show_customer)),
+            rx.table.body(rx.foreach(State.liquidaciones, show_customer)),
             variant="surface",
             size="3",
             width="100%",
