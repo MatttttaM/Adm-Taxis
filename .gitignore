@@ -1,6 +1,6 @@
 *.db
 *.py[cod]
 .web
+README.md
 __pycache__/
 assets/external/
-README.md
