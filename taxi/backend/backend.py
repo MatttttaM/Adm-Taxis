@@ -1,4 +1,5 @@
 import reflex as rx
+from sqlalchemy import DECIMAL, INTEGER, VARCHAR
 from sqlmodel import Field, select, asc, desc, or_, func, cast, String
 from datetime import datetime, timedelta
 
@@ -38,7 +39,7 @@ class Liquidacion(rx.Model, table=True):
     """Modelo de Liquidacion"""
     id: int = Field(default=None, primary_key=True)
     movil: int
-    total: float
+    recaudacion_total: int
     gastos: float
     salario: float
     viatico: float
@@ -131,7 +132,6 @@ class State(rx.State):
         self.sort_value = sort_value
         self.load_entries()
 
-
     def toggle_sort(self):
         self.sort_reverse = not self.sort_reverse
         self.load_entries()
@@ -156,8 +156,8 @@ class State(rx.State):
             session.add(Liquidacion(**self.current_liquidacion))
             session.commit()
         self.load_entries()
-        return rx.toast.info(f"User {self.current_liquidacion['id']} has been added.", variant="outline", position="bottom-right")
-    
+        return rx.toast.info(f"Liquidación {self.current_liquidacion['id']} has been added.", variant="outline", position="bottom-right")
+
 
     def update_customer_to_db(self, form_data: dict):
         self.current_liquidacion.update(form_data)

@@ -10,7 +10,7 @@ def show_customer(liquidacion: Liquidacion):
     return rx.table.row(
         rx.table.cell(liquidacion.id),
         rx.table.cell(liquidacion.movil),
-        rx.table.cell(liquidacion.total),
+        rx.table.cell(liquidacion.recaudacion_total),
         rx.table.cell(liquidacion.gastos),
         rx.table.cell(liquidacion.salario),
         rx.table.cell(liquidacion.combustible),
@@ -44,6 +44,7 @@ def show_customer(liquidacion: Liquidacion):
     )
 
 
+### Botón "+ Add Liquidacion"
 def add_customer_button() -> rx.Component:
     return rx.dialog.root(
         rx.dialog.trigger(
@@ -82,42 +83,11 @@ def add_customer_button() -> rx.Component:
             ),
             rx.flex(
                 rx.form.root(
-                    # rx.flex(
-                    #     # Name
-                    #     form_field(
-                    #         "Nombre",
-                    #         "Customer Name",
-                    #         "text",
-                    #         "name",
-                    #         "user",
-                    #     ),
-                    #     # Email
-                    #     form_field(
-                    #         "Email", "user@reflex.dev", "email", "email", "mail"
-                    #     ),
-                    #     # Phone
-                    #     form_field("Phone", "Customer Phone", "tel", "phone", "phone"),
-                    #     # Address
-                    #     form_field(
-                    #         "Address",
-                    #         "Customer Address",
-                    #         "text",
-                    #         "address",
-                    #         "home"
-                    #     ),
-                    #     # Payments
-                    #     form_field(
-                    #         "Payment ($)",
-                    #         "Customer Payment",
-                    #         "number",
-                    #         "Total",
-                    #         "dollar-sign",
-                    #     ),
-
+                    ### Ventana que se abré en el boton "+ Add Liquidacion"
                     rx.flex(
-                        # Name
+                        # ID
                         form_field(
-                            "Nombre",
+                            "id",
                             "Customer Name",
                             "number",
                             "id",
@@ -136,7 +106,7 @@ def add_customer_button() -> rx.Component:
                             "Phone",
                             "Customer Phone",
                             "number",
-                            "total",
+                            "recaudacion_total",
                             "phone",
                         ),
                         # otro
@@ -172,7 +142,40 @@ def add_customer_button() -> rx.Component:
                             "dollar-sign",
                         ),
                         
-                        # Status
+
+                    # rx.flex(
+                    #     # Name
+                    #     form_field(
+                    #         "Nombre",
+                    #         "Customer Name",
+                    #         "text",
+                    #         "name",
+                    #         "user",
+                    #     ),
+                    #     # Email
+                    #     form_field(
+                    #         "Email", "user@reflex.dev", "email", "email", "mail"
+                    #     ),
+                    #     # Phone
+                    #     form_field("Phone", "Customer Phone", "tel", "phone", "phone"),
+                    #     # Address
+                    #     form_field(
+                    #         "Address",
+                    #         "Customer Address",
+                    #         "text",
+                    #         "address",
+                    #         "home"
+                    #     ),
+                    #     # Payments
+                    #     form_field(
+                    #         "Payment ($)",
+                    #         "Customer Payment",
+                    #         "number",
+                    #         "Total",
+                    #         "dollar-sign",
+                    #     ),
+
+                        # Estado
                         rx.vstack(
                             rx.hstack(
                                 rx.icon("truck", size=16, stroke_width=1.5),
@@ -194,14 +197,14 @@ def add_customer_button() -> rx.Component:
                     rx.flex(
                         rx.dialog.close(
                             rx.button(
-                                "Cancel",
+                                "Cancelar",
                                 variant="soft",
                                 color_scheme="gray",
                             ),
                         ),
                         rx.form.submit(
                             rx.dialog.close(
-                                rx.button("Submit Customer"),
+                                rx.button("Cargar liquidaciónr"),
                             ),
                             as_child=True,
                         ),
@@ -210,6 +213,7 @@ def add_customer_button() -> rx.Component:
                         mt="4",
                         justify="end",
                     ),
+                    ### LLama a la función add_customer_to_db para cargar la liquidación
                     on_submit=State.add_customer_to_db,
                     reset_on_submit=False,
                 ),
@@ -225,12 +229,13 @@ def add_customer_button() -> rx.Component:
     )
 
 
+### Botón de "Editar" una liquidación
 def update_customer_dialog(liquidacion):
     return rx.dialog.root(
         rx.dialog.trigger(
             rx.button(
                 rx.icon("square-pen", size=22),
-                rx.text("Edit", size="3"),
+                rx.text("Editar", size="3"),
                 color_scheme="blue",
                 size="2",
                 variant="solid",
@@ -247,12 +252,12 @@ def update_customer_dialog(liquidacion):
                 ),
                 rx.vstack(
                     rx.dialog.title(
-                        "Edit Customer",
+                        "Editar Liquidación",
                         weight="bold",
                         margin="0",
                     ),
                     rx.dialog.description(
-                        "Edit the customer's info",
+                        "Editar o actualizar la liquidación",
                     ),
                     spacing="1",
                     height="100%",
@@ -267,10 +272,10 @@ def update_customer_dialog(liquidacion):
             rx.flex(
                 rx.form.root(
                     rx.flex(
-                        # Name
+                        # Número de chofer
                         form_field(
-                            "Nombre",
-                            "Customer Name",
+                            "id",
+                            "Número de chofer",
                             "text",
                             "name",
                             "user",
@@ -293,7 +298,7 @@ def update_customer_dialog(liquidacion):
                             "tel",
                             "phone",
                             "phone",
-                            str(liquidacion.total),
+                            str(liquidacion.recaudacion_total),
                             # user.phone,
                         ),
                         # Address
@@ -313,7 +318,6 @@ def update_customer_dialog(liquidacion):
                             "number",
                             "payments",
                             "dollar-sign",
-                            str(liquidacion.salario)
                             # user.payments.to(str),        
                         ),                
                         # otro
@@ -385,14 +389,14 @@ def update_customer_dialog(liquidacion):
                     rx.flex(
                         rx.dialog.close(
                             rx.button(
-                                "Cancel",
+                                "Cancelar",
                                 variant="soft",
                                 color_scheme="gray",
                             ),
                         ),
                         rx.form.submit(
                             rx.dialog.close(
-                                rx.button("Update Customer"),
+                                rx.button("Actualizar liquidación"),
                             ),
                             as_child=True,
                         ),
@@ -401,6 +405,7 @@ def update_customer_dialog(liquidacion):
                         mt="4",
                         justify="end",
                     ),
+                    ### LLama a la función update_customer_to_db para actualizar la liquidación
                     on_submit=State.update_customer_to_db,
                     reset_on_submit=False,
                 ),
@@ -429,9 +434,12 @@ def _header_cell(text: str, icon: str):
 
 def main_table():
     return rx.fragment(
+        ### Primera línea de objetos
         rx.flex(
+            ### Botón de añadir liquidación
             add_customer_button(),
             rx.spacer(),
+            ### Botón para ordenar
             rx.cond(
                 State.sort_reverse,
                 rx.icon(
@@ -449,15 +457,17 @@ def main_table():
                     on_click=State.toggle_sort,
                 ),
             ),
+            ### Botón para ordenar según las opciones
             rx.select(
-                ["name", "email", "phone", "address", "payments", "date", "status"],
+                ["id", "movil", "recaudacion_total", "salario", "gastos", "date", "status"],    # opciones
                 placeholder="Sort By: Name",
                 size="3",
                 on_change=lambda sort_value: State.sort_values(sort_value),
             ),
+            ### Botón para buscar
             rx.input(
                 rx.input.slot(rx.icon("search")),
-                placeholder="Search here...",
+                placeholder="Buscar...",
                 size="3",
                 max_width="225px",
                 width="100%",
@@ -471,14 +481,15 @@ def main_table():
             width="100%",
             padding_bottom="1em",
         ),
+        ### Tabla principal
         rx.table.root(
             rx.table.header(
                 rx.table.row(
                     _header_cell("id", "user"),
-                    _header_cell("Móvil", "user"),
+                    _header_cell("Móvil", "car-taxi-front"),
                     _header_cell("Recaudación Total", "dollar-sign"),
                     _header_cell("Salario", "dollar-sign"),
-                    _header_cell("Combustible", "dollar-sign"),
+                    _header_cell("Combustible", "fuel"),
                     _header_cell("Extras", "dollar-sign"),
                     _header_cell("Gastos", "dollar-sign"),
                     _header_cell("Líquido", "dollar-sign"),
@@ -489,6 +500,7 @@ def main_table():
                     _header_cell("Actions", "cog"),
                 ),
             ),
+            ### Muestra los datos de la tabla
             rx.table.body(rx.foreach(State.liquidaciones, show_customer)),
             variant="surface",
             size="3",
