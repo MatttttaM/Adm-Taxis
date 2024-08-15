@@ -12,10 +12,10 @@ def _badge(icon: str, text: str, color_scheme: str):
     )
 
 
-def status_badge(status: str):
+def estado_badge(estado: str):
     badge_mapping = {
         "Delivered": ("check", "Delivered", "green"),
         "Pending": ("loader", "Pending", "yellow"),
         "Cancelled": ("ban", "Cancelled", "red"),
     }
-    return _badge(*badge_mapping.get(status, ("loader", "Pending", "yellow")))
+    return _badge(*badge_mapping.get(estado, ("loader", "Pending", "yellow")))

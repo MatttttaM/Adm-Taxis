@@ -39,18 +39,20 @@ class Liquidacion(rx.Model, table=True):
     """Modelo de Liquidacion"""
     id: int = Field(default=None, primary_key=True)
     movil: int
-    recaudacion_total: int
+    recaudacion: int
     gastos: float
     salario: float
     viatico: float
-    combustible: float
-    extras: float
+    combustible: int
+    extras: int
     liquido: float
     aportes: float
     sub_total: float
     h13: float
     credito: float
-    status: str
+    entrega: float
+    fecha: str
+    estado: str
 
 
 class State(rx.State):
@@ -146,7 +148,7 @@ class State(rx.State):
 
     def add_customer_to_db(self, form_data: dict):
         self.current_liquidacion = form_data
-        self.current_liquidacion["date"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.current_liquidacion["fecha"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         with rx.session(url="mysql+pymysql://root:Admin@localhost:3306/taxidb") as session:
             if session.exec(
@@ -183,6 +185,8 @@ class State(rx.State):
         self.load_entries()
         return rx.toast.info(f"User {liquidacion.id} has been deleted.", variant="outline", position="bottom-right")
     
+    
+
     
     # @rx.var(cache=True)
     # def payments_change(self) -> float:

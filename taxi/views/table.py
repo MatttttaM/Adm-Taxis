@@ -1,7 +1,9 @@
 import reflex as rx
+
+from taxi.constants import Encabezado
 from ..backend.backend import Liquidacion, State, Liquidacion
 from ..components.form_field import form_field
-from ..components.status_badges import status_badge
+from ..components.estado_badges import estado_badge
 
 
 def show_customer(liquidacion: Liquidacion):
@@ -10,21 +12,23 @@ def show_customer(liquidacion: Liquidacion):
     return rx.table.row(
         rx.table.cell(liquidacion.id),
         rx.table.cell(liquidacion.movil),
-        rx.table.cell(liquidacion.recaudacion_total),
-        rx.table.cell(liquidacion.gastos),
+        rx.table.cell(liquidacion.recaudacion),
         rx.table.cell(liquidacion.salario),
         rx.table.cell(liquidacion.combustible),
         rx.table.cell(liquidacion.extras),
+        rx.table.cell(liquidacion.gastos),
         rx.table.cell(liquidacion.liquido),
         rx.table.cell(liquidacion.h13),
         rx.table.cell(liquidacion.credito),
+        rx.table.cell(liquidacion.entrega),
+        rx.table.cell(liquidacion.fecha),
         rx.table.cell(
             rx.match(
-                liquidacion.status,
-                ("Delivered", status_badge("Delivered")),
-                ("Pending", status_badge("Pending")),
-                ("Cancelled", status_badge("Cancelled")),
-                status_badge("Pending"),
+                liquidacion.estado,
+                ("Delivered", estado_badge("Delivered")),
+                ("Pending", estado_badge("Pending")),
+                ("Cancelled", estado_badge("Cancelled")),
+                estado_badge("Pending"),
             )
         ),
         rx.table.cell(
@@ -106,7 +110,7 @@ def add_customer_button() -> rx.Component:
                             "Phone",
                             "Customer Phone",
                             "number",
-                            "recaudacion_total",
+                            "recaudacion",
                             "phone",
                         ),
                         # otro
@@ -141,7 +145,7 @@ def add_customer_button() -> rx.Component:
                             "credito",
                             "dollar-sign",
                         ),
-                        
+
 
                     # rx.flex(
                     #     # Name
@@ -179,13 +183,13 @@ def add_customer_button() -> rx.Component:
                         rx.vstack(
                             rx.hstack(
                                 rx.icon("truck", size=16, stroke_width=1.5),
-                                rx.text("Status"),
+                                rx.text("estado"),
                                 align="center",
                                 spacing="2",
                             ),
                             rx.radio(
                                 ["Delivered", "Pending", "Cancelled"],
-                                name="status",
+                                name="estado",
                                 direction="row",
                                 as_child=True,
                                 required=True,
@@ -271,113 +275,88 @@ def update_customer_dialog(liquidacion):
             ),
             rx.flex(
                 rx.form.root(
+                    ### Ventana que se abre para "Editar" una liquidación
                     rx.flex(
-                        # Número de chofer
                         form_field(
-                            "id",
-                            "Número de chofer",
-                            "text",
-                            "name",
-                            "user",
-                            str(liquidacion.id),
+                            Encabezado.CHOFER.value["titulo"],
+                            Encabezado.CHOFER.value["desc"],
+                            Encabezado.CHOFER.value["type"],
+                            Encabezado.CHOFER.value["var"],
+                            Encabezado.CHOFER.value["icono"],
+                            # str(liquidacion.id),
                         ),
-                        # Email
                         form_field(
-                            "Email",
-                            "user@reflex.dev",
-                            "email",
-                            "email",
-                            "mail",
-                            str(liquidacion.movil),
+                            Encabezado.MOVIL.value["titulo"],
+                            Encabezado.MOVIL.value["desc"],
+                            Encabezado.MOVIL.value["type"],
+                            Encabezado.MOVIL.value["var"],
+                            Encabezado.MOVIL.value["icono"],
+                            # str(liquidacion.movil),
                             # user.email,
                         ),
-                        # Phone
                         form_field(
-                            "Phone",
-                            "Customer Phone",
-                            "tel",
-                            "phone",
-                            "phone",
-                            str(liquidacion.recaudacion_total),
+                            Encabezado.RECAUDACION.value["titulo"],
+                            Encabezado.RECAUDACION.value["desc"],
+                            Encabezado.RECAUDACION.value["type"],
+                            Encabezado.RECAUDACION.value["var"],
+                            Encabezado.RECAUDACION.value["icono"],
+                            # str(liquidacion.recaudacion),
                             # user.phone,
                         ),
-                        # Address
                         form_field(
-                            "Address",
-                            "Customer Address",
-                            "text",
-                            "address",
-                            "home",
-                            str(liquidacion.gastos),
+                            Encabezado.COMBUSTIBLE.value["titulo"],
+                            Encabezado.COMBUSTIBLE.value["desc"],
+                            Encabezado.COMBUSTIBLE.value["type"],
+                            Encabezado.COMBUSTIBLE.value["var"],
+                            Encabezado.COMBUSTIBLE.value["icono"],
+                            #str(liquidacion.combustible),
+                            # str(liquidacion.gastos),
                             # user.address,
                         ),
-                        # Payments
                         form_field(
-                            "Payment ($)",
-                            "Customer Payment",
-                            "number",
-                            "payments",
-                            "dollar-sign",
-                            # user.payments.to(str),        
+                            Encabezado.EXTRAS.value["titulo"],
+                            Encabezado.EXTRAS.value["desc"],
+                            Encabezado.EXTRAS.value["type"],
+                            Encabezado.EXTRAS.value["var"],
+                            Encabezado.EXTRAS.value["icono"],
+                            # # user.payments.to(str),        
                         ),                
-                        # otro
                         form_field(
-                            "Payment ($)",
-                            "Customer Payment",
-                            "number",
-                            "payments",
-                            "dollar-sign",
-                            str(liquidacion.combustible),
+                            Encabezado.H13.value["titulo"],
+                            Encabezado.H13.value["desc"],
+                            Encabezado.H13.value["type"],
+                            Encabezado.H13.value["var"],
+                            Encabezado.H13.value["icono"],
+                            # str(liquidacion.combustible),
                         ),
-                        # otro
                         form_field(
-                            "Payment ($)",
-                            "Customer Payment",
-                            "number",
-                            "payments",
-                            "dollar-sign",
-                            str(liquidacion.extras),
+                            Encabezado.CREDITO.value["titulo"],
+                            Encabezado.CREDITO.value["desc"],
+                            Encabezado.CREDITO.value["type"],
+                            Encabezado.CREDITO.value["var"],
+                            Encabezado.CREDITO.value["icono"],
+                            # str(liquidacion.extras),
                         ),
-                        # otro
                         form_field(
-                            "Payment ($)",
-                            "Customer Payment",
-                            "number",
-                            "payments",
-                            "dollar-sign",
-                            str(liquidacion.liquido),
+                            Encabezado.FECHA.value["titulo"],
+                            Encabezado.FECHA.value["desc"],
+                            Encabezado.FECHA.value["type"],
+                            Encabezado.FECHA.value["var"],
+                            Encabezado.FECHA.value["icono"],
+                            # str(liquidacion.liquido),
                         ),
-                        # otro
-                        form_field(
-                            "Payment ($)",
-                            "Customer Payment",
-                            "number",
-                            "payments",
-                            "dollar-sign",
-                            str(liquidacion.h13),
-                        ),
-                        # otro
-                        form_field(
-                            "Payment ($)",
-                            "Customer Payment",
-                            "number",
-                            "payments",
-                            "dollar-sign",
-                            str(liquidacion.credito),
-                        ),
-
-                        # Status
+                        # ESTADO
                         rx.vstack(
                             rx.hstack(
                                 rx.icon("truck", size=16, stroke_width=1.5),
-                                rx.text("Status"),
+                                rx.text("estado"),
                                 align="center",
                                 spacing="2",
                             ),
                             rx.radio(
-                                ["Delivered", "Pending", "Cancelled"],
-                                default_value=liquidacion.status,
-                                name="status",
+                                ["Entregada", "Pendiente", "Movil parado"],
+                                default_value=liquidacion.estado,
+                                name="estado",
                                 direction="row",
                                 as_child=True,
                                 required=True,
@@ -409,16 +388,16 @@ def update_customer_dialog(liquidacion):
                     on_submit=State.update_customer_to_db,
                     reset_on_submit=False,
                 ),
-                width="100%",
-                direction="column",
-                spacing="4",
             ),
-            max_width="450px",
-            padding="1.5em",
-            border=f"2px solid {rx.color('accent', 7)}",
-            border_radius="25px",
+            width="100%",
+            direction="column",
+            spacing="4",
         ),
-    )
+        max_width="450px",
+        padding="1.5em",
+        border=f"2px solid {rx.color('accent', 7)}",
+        border_radius="25px",
+    ),
 
 
 def _header_cell(text: str, icon: str):
@@ -459,7 +438,7 @@ def main_table():
             ),
             ### Botón para ordenar según las opciones
             rx.select(
-                ["id", "movil", "recaudacion_total", "salario", "gastos", "date", "status"],    # opciones
+                ["id", "movil", "recaudacion", "salario", "gastos", "date", "estado"],    # opciones
                 placeholder="Sort By: Name",
                 size="3",
                 on_change=lambda sort_value: State.sort_values(sort_value),
@@ -485,19 +464,20 @@ def main_table():
         rx.table.root(
             rx.table.header(
                 rx.table.row(
-                    _header_cell("id", "user"),
-                    _header_cell("Móvil", "car-taxi-front"),
-                    _header_cell("Recaudación Total", "dollar-sign"),
-                    _header_cell("Salario", "dollar-sign"),
-                    _header_cell("Combustible", "fuel"),
-                    _header_cell("Extras", "dollar-sign"),
-                    _header_cell("Gastos", "dollar-sign"),
-                    _header_cell("Líquido", "dollar-sign"),
-                    _header_cell("H13", "dollar-sign"),
-                    _header_cell("Crédito", "dollar-sign"),
-                    _header_cell("Date", "calendar"),
-                    _header_cell("Status", "truck"),
-                    _header_cell("Actions", "cog"),
+                    _header_cell(Encabezado.CHOFER.value["titulo"], Encabezado.CHOFER.value["icono"]),
+                    _header_cell(Encabezado.MOVIL.value["titulo"], Encabezado.MOVIL.value["icono"]),
+                    _header_cell(Encabezado.RECAUDACION.value["titulo"], Encabezado.RECAUDACION.value["icono"]),
+                    _header_cell(Encabezado.SALARIO.value["titulo"], Encabezado.SALARIO.value["icono"]),
+                    _header_cell(Encabezado.COMBUSTIBLE.value["titulo"], Encabezado.COMBUSTIBLE.value["icono"]),
+                    _header_cell(Encabezado.EXTRAS.value["titulo"], Encabezado.EXTRAS.value["icono"]),
+                    _header_cell(Encabezado.GASTOS.value["titulo"], Encabezado.GASTOS.value["icono"]),
+                    _header_cell(Encabezado.LIQUIDO.value["titulo"], Encabezado.LIQUIDO.value["icono"]),
+                    _header_cell(Encabezado.H13.value["titulo"], Encabezado.H13.value["icono"]),
+                    _header_cell(Encabezado.CREDITO.value["titulo"], Encabezado.CREDITO.value["icono"]),
+                    _header_cell(Encabezado.ENTREGA.value["titulo"], Encabezado.ENTREGA.value["icono"]),
+                    _header_cell(Encabezado.FECHA.value["titulo"], Encabezado.FECHA.value["icono"]),
+                    _header_cell(Encabezado.ESTADO.value["titulo"], Encabezado.CHOFER.value["icono"]),
+                    _header_cell(Encabezado.ACCION.value["titulo"], Encabezado.ACCION.value["icono"]),
                 ),
             ),
             ### Muestra los datos de la tabla
