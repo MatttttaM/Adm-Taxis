@@ -38,18 +38,20 @@ class Liquidacion(rx.Model, table=True):
     """Modelo de Liquidacion"""
     id: int = Field(default=None, primary_key=True)
     movil: int
-    total: float
+    recaudacion: int
     gastos: float
     salario: float
     viatico: float
-    combustible: float
-    extras: float
+    combustible: int
+    extras: int
     liquido: float
     aportes: float
     sub_total: float
     h13: float
     credito: float
-    status: str
+    entrega: float
+    fecha: str
+    estado: str
 
 
 class State(rx.State):
@@ -131,7 +133,6 @@ class State(rx.State):
         self.sort_value = sort_value
         self.load_entries()
 
-
     def toggle_sort(self):
         self.sort_reverse = not self.sort_reverse
         self.load_entries()
@@ -144,9 +145,14 @@ class State(rx.State):
         self.current_liquidacion = liquidacion
 
 
+    ### Calculos y creación de valores a partir de los ingresado
     def add_customer_to_db(self, form_data: dict):
         self.current_liquidacion = form_data
-        self.current_liquidacion["date"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.current_liquidacion["fecha"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.current_liquidacion["salario"] = float(self.current_liquidacion["recaudacion"]) * 0.29
+        self.current_liquidacion["gastos"] = float(self.current_liquidacion["salario"])+float(self.current_liquidacion["combustible"])+float(self.current_liquidacion["extras"])
+        self.current_liquidacion["liquido"] = float(self.current_liquidacion["recaudacion"])-float(self.current_liquidacion["gastos"])
+        self.current_liquidacion["entrega"] = float(self.current_liquidacion["liquido"])-float(self.current_liquidacion["h13"])-float(self.current_liquidacion["credito"])
 
         with rx.session(url="mysql+pymysql://root:Admin@localhost:3306/taxidb") as session:
             if session.exec(
@@ -156,8 +162,8 @@ class State(rx.State):
             session.add(Liquidacion(**self.current_liquidacion))
             session.commit()
         self.load_entries()
-        return rx.toast.info(f"User {self.current_liquidacion['id']} has been added.", variant="outline", position="bottom-right")
-    
+        return rx.toast.info(f"Liquidación {self.current_liquidacion['id']} has been added.", variant="outline", position="bottom-right")
+
 
     def update_customer_to_db(self, form_data: dict):
         self.current_liquidacion.update(form_data)
@@ -175,7 +181,7 @@ class State(rx.State):
 
 
     def delete_customer(self, id: int):
-        """Delete a customer from the database."""
+        """Borrar una liquidación de la base de datos."""
         with rx.session(url="mysql+pymysql://root:Admin@localhost:3306/taxidb") as session:
             liquidacion = session.exec(select(Liquidacion).where(Liquidacion.id == id)).first()
             session.delete(liquidacion)
@@ -183,6 +189,8 @@ class State(rx.State):
         self.load_entries()
         return rx.toast.info(f"User {liquidacion.id} has been deleted.", variant="outline", position="bottom-right")
     
+    
+
     
     # @rx.var(cache=True)
     # def payments_change(self) -> float:

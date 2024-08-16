@@ -17,4 +17,23 @@ def liquidacion_schema(liquidacion) -> dict:
 
 
 def liquidaciones_schema(liquidaciones) -> list:
+<<<<<<< HEAD
     return [liquidacion_schema(liquidacion) for liquidacion in liquidaciones]
+=======
+    return [liquidacion_schema(liquidacion) for liquidacion in liquidaciones]
+
+
+# _header_cell("id", "user"),
+# _header_cell("Móvil", "user"),
+# _header_cell("Recaudación Total", "dollar-sign"),
+# _header_cell("Salario", "dollar-sign"),
+# _header_cell("Combustible", "dollar-sign"),
+# _header_cell("Extras", "dollar-sign"),
+# _header_cell("Gastos", "dollar-sign"),
+# _header_cell("Líquido", "dollar-sign"),
+# _header_cell("H13", "dollar-sign"),
+# _header_cell("Crédito", "dollar-sign"),
+# _header_cell("Date", "calendar"),
+# _header_cell("Status", "truck"),
+# _header_cell("Actions", "cog"),
+>>>>>>> dev
