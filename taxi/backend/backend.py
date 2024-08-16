@@ -146,9 +146,14 @@ class State(rx.State):
         self.current_liquidacion = liquidacion
 
 
+    ### Calculos y creación de valores a partir de los ingresado
     def add_customer_to_db(self, form_data: dict):
         self.current_liquidacion = form_data
         self.current_liquidacion["fecha"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.current_liquidacion["salario"] = float(self.current_liquidacion["recaudacion"]) * 0.29
+        self.current_liquidacion["gastos"] = float(self.current_liquidacion["salario"])+float(self.current_liquidacion["combustible"])+float(self.current_liquidacion["extras"])
+        self.current_liquidacion["liquido"] = float(self.current_liquidacion["recaudacion"])-float(self.current_liquidacion["gastos"])
+        self.current_liquidacion["entrega"] = float(self.current_liquidacion["liquido"])-float(self.current_liquidacion["h13"])-float(self.current_liquidacion["credito"])
 
         with rx.session(url="mysql+pymysql://root:Admin@localhost:3306/taxidb") as session:
             if session.exec(
@@ -177,7 +182,7 @@ class State(rx.State):
 
 
     def delete_customer(self, id: int):
-        """Delete a customer from the database."""
+        """Borrar una liquidación de la base de datos."""
         with rx.session(url="mysql+pymysql://root:Admin@localhost:3306/taxidb") as session:
             liquidacion = session.exec(select(Liquidacion).where(Liquidacion.id == id)).first()
             session.delete(liquidacion)

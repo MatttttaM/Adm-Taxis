@@ -3,7 +3,7 @@ from enum import Enum
 
 class Encabezado(Enum):
     CHOFER = {"var": "id", "titulo": "Chófer", "icono": "user", "desc": "Número de Chofer", "type": "number"}
-    MOVIL = {"var": "movil", "titulo": "Móvil", "icono": "car-taxi-front", "desc": "Número de Móvil", "type": "number"}
+    MOVIL = {"var": "movil", "titulo": "Móvil", "icono": "car-taxi-front", "desc": "STX0000", "type": "number"}
     RECAUDACION = {"var": "recaudacion", "titulo": "Recaudación", "icono": "dollar-sign", "desc": "Monto de la Recaudación", "type": "number"}
     SALARIO = {"var": "salario", "titulo": "Salario", "icono": "dollar-sign", "desc": "", "type": "number"}
     COMBUSTIBLE = {"var": "combustible", "titulo": "Combustible", "icono": "fuel", "desc": "Combustible ingresado", "type": "number"}
@@ -18,12 +18,66 @@ class Encabezado(Enum):
     ACCION = {"var": "", "titulo": "Acción", "icono": "cog", "desc": "", "type": ""}
 
 
-# print(Encabezado.CHOFER.value["titulo"])
-
+["Entregada", "Pendiente", "Movil parado"]
 
 # print(Encabezado.CHOFER.value["titulo"], Encabezado.CHOFER.value["icono"])
 
-
+# form_field(
+#     Encabezado.CHOFER.value["titulo"],
+#     Encabezado.CHOFER.value["desc"],
+#     Encabezado.CHOFER.value["type"],
+#     Encabezado.CHOFER.value["var"],
+#     Encabezado.CHOFER.value["icono"],
+# ),
+# form_field(
+#     Encabezado.MOVIL.value["titulo"],
+#     Encabezado.MOVIL.value["desc"],
+#     Encabezado.MOVIL.value["type"],
+#     Encabezado.MOVIL.value["var"],
+#     Encabezado.MOVIL.value["icono"],
+# ),
+# form_field(
+#     Encabezado.RECAUDACION.value["titulo"],
+#     Encabezado.RECAUDACION.value["desc"],
+#     Encabezado.RECAUDACION.value["type"],
+#     Encabezado.RECAUDACION.value["var"],
+#     Encabezado.RECAUDACION.value["icono"],
+# ),
+# form_field(
+#     Encabezado.COMBUSTIBLE.value["titulo"],
+#     Encabezado.COMBUSTIBLE.value["desc"],
+#     Encabezado.COMBUSTIBLE.value["type"],
+#     Encabezado.COMBUSTIBLE.value["var"],
+#     Encabezado.COMBUSTIBLE.value["icono"],
+# ),
+# form_field(
+#     Encabezado.EXTRAS.value["titulo"],
+#     Encabezado.EXTRAS.value["desc"],
+#     Encabezado.EXTRAS.value["type"],
+#     Encabezado.EXTRAS.value["var"],
+#     Encabezado.EXTRAS.value["icono"],
+# ),                
+# form_field(
+#     Encabezado.H13.value["titulo"],
+#     Encabezado.H13.value["desc"],
+#     Encabezado.H13.value["type"],
+#     Encabezado.H13.value["var"],
+#     Encabezado.H13.value["icono"],
+# ),
+# form_field(
+#     Encabezado.CREDITO.value["titulo"],
+#     Encabezado.CREDITO.value["desc"],
+#     Encabezado.CREDITO.value["type"],
+#     Encabezado.CREDITO.value["var"],
+#     Encabezado.CREDITO.value["icono"],
+# ),
+# form_field(
+#     Encabezado.FECHA.value["titulo"],
+#     Encabezado.FECHA.value["desc"],
+#     Encabezado.FECHA.value["type"],
+#     Encabezado.FECHA.value["var"],
+#     Encabezado.FECHA.value["icono"],
+# )
 
 
 # _header_cell(Encabezado.CHOFER.value["titulo"], Encabezado.CHOFER.value["icono"]),

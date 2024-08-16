@@ -14,8 +14,8 @@ def _badge(icon: str, text: str, color_scheme: str):
 
 def estado_badge(estado: str):
     badge_mapping = {
-        "Delivered": ("check", "Delivered", "green"),
-        "Pending": ("loader", "Pending", "yellow"),
-        "Cancelled": ("ban", "Cancelled", "red"),
+        "Delivered": ("check", "Entregada", "green"),
+        "Pending": ("loader", "Pendiente", "yellow"),
+        "Cancelled": ("ban", "Movil parado", "red"),
     }
     return _badge(*badge_mapping.get(estado, ("loader", "Pending", "yellow")))
