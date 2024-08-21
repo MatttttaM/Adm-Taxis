@@ -2,7 +2,8 @@ from enum import Enum
 
 
 class Encabezado(Enum):
-    CHOFER = {"var": "id", "titulo": "Chófer", "icono": "user", "desc": "Número de Chofer", "type": "number"}
+    COD_ID = {"var": "cod_id", "titulo": "Código", "icono": "scan-barcode", "desc": "Código de Liquidación", "type": "string"}
+    CHOFER = {"var": "chofer", "titulo": "Chófer", "icono": "user", "desc": "Número de Chofer", "type": "number"}
     MOVIL = {"var": "movil", "titulo": "Móvil", "icono": "car-taxi-front", "desc": "STX0000", "type": "number"}
     RECAUDACION = {"var": "recaudacion", "titulo": "Recaudación", "icono": "dollar-sign", "desc": "Monto de la Recaudación", "type": "number"}
     SALARIO = {"var": "salario", "titulo": "Salario", "icono": "dollar-sign", "desc": "", "type": "number"}
@@ -19,6 +20,12 @@ class Encabezado(Enum):
 
 
 ["Entregada", "Pendiente", "Movil parado"]
+
+APORTE = 0.19
+
+
+DB_URL = "mysql+pymysql://avnadmin:AVNS_0wDZLak0nK19kamQus8@dbliqudiaciones-admtaxi.b.aivencloud.com:16928/defaultdb?"
+
 
 # print(Encabezado.CHOFER.value["titulo"], Encabezado.CHOFER.value["icono"])
 

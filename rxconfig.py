@@ -1,8 +1,8 @@
 import reflex as rx
 
-from taxi.db.client import DB_URL
 
 config = rx.Config(
     app_name="taxi",
-    DATABASE_URL=DB_URL
+    favicon="favicon.ico",
+    DATABASE_URL="mysql+pymysql://avnadmin:AVNS_0wDZLak0nK19kamQus8@dbliqudiaciones-admtaxi.b.aivencloud.com:16928/defaultdb?",
 )

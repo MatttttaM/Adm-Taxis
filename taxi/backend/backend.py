@@ -1,6 +1,10 @@
+from dataclasses import field
 import reflex as rx
 from sqlmodel import Field, select, asc, desc, or_, func, cast, String
 from datetime import datetime, timedelta
+
+from taxi.constants import APORTE
+
 
 
 # def _get_percentage_change(value: Union[int, float], prev_value: Union[int, float]) -> float:
@@ -34,14 +38,14 @@ class MonthValues(rx.Base):
     num_delivers: int = 0
 
 
-class Liquidacion(rx.Model, table=True):
+class Liquidaciones(rx.Model, table=True):
     """Modelo de Liquidacion"""
-    id: int = Field(default=None, primary_key=True)
+    cod_id: str = Field(primary_key=True)
+    chofer: int
     movil: int
     recaudacion: int
     gastos: float
     salario: float
-    viatico: float
     combustible: int
     extras: int
     liquido: float
@@ -57,36 +61,36 @@ class Liquidacion(rx.Model, table=True):
 class State(rx.State):
     """The app state."""
 
-    liquidaciones: list[Liquidacion] = []
+    liquidaciones: list[Liquidaciones] = []
     sort_value: str = ""
     sort_reverse: bool = False
     search_value: str = ""
-    current_liquidacion: Liquidacion = Liquidacion()
+    current_liquidacion: Liquidaciones = Liquidaciones()
     # Values for current and previous month
     current_month_values: MonthValues = MonthValues()
     previous_month_values: MonthValues = MonthValues()
 
 
-    def load_entries(self) -> list[Liquidacion]:
-            """Get all users from the database."""
-            with rx.session(url="mysql+pymysql://root:Admin@localhost:3306/taxidb") as session:
-                query = select(Liquidacion)
+    def load_entries(self) -> list[Liquidaciones]:
+            """Get all recaudaciones from the database."""
+            with rx.session(url="mysql+pymysql://avnadmin:AVNS_0wDZLak0nK19kamQus8@dbliqudiaciones-admtaxi.b.aivencloud.com:16928/defaultdb?") as session:
+                query = select(Liquidaciones)
                 if self.search_value:
                     search_value = f"%{str(self.search_value).lower()}%"
                     query = query.where(
                         or_(
                             *[
-                                getattr(Liquidacion, field).ilike(search_value)
-                                for field in Liquidacion.__fields__
-                                if field not in ["id"]
+                                getattr(Liquidaciones, field).ilike(search_value)
+                                for field in Liquidaciones.__fields__
+                                if field not in ["chofer"]
                             ],
-                            # ensures that payments is cast to a string before applying the ilike operator
-                            cast(Liquidacion.movil, String).ilike(search_value)
+                            # ensures that movil is cast to a string before applying the ilike operator
+                            cast(Liquidaciones.movil, String).ilike(search_value)
                         )
                     )
 
                 if self.sort_value:
-                    sort_column = getattr(Liquidacion, self.sort_value)
+                    sort_column = getattr(Liquidaciones, self.sort_value)
                     order = desc(sort_column) if self.sort_reverse else asc(sort_column)
                     query = query.order_by(order)
 
@@ -141,7 +145,7 @@ class State(rx.State):
         self.search_value = search_value
         self.load_entries()
 
-    def get_liquidacion(self, liquidacion: Liquidacion):
+    def get_liquidacion(self, liquidacion: Liquidaciones):
         self.current_liquidacion = liquidacion
 
 
@@ -149,49 +153,51 @@ class State(rx.State):
     def add_customer_to_db(self, form_data: dict):
         self.current_liquidacion = form_data
         self.current_liquidacion["fecha"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.current_liquidacion["cod_id"] = "C"+str(self.current_liquidacion['chofer'])+"_"+"M"+str(self.current_liquidacion['movil'])+"_"+str(self.current_liquidacion['fecha'][2:10])
         self.current_liquidacion["salario"] = float(self.current_liquidacion["recaudacion"]) * 0.29
         self.current_liquidacion["gastos"] = float(self.current_liquidacion["salario"])+float(self.current_liquidacion["combustible"])+float(self.current_liquidacion["extras"])
         self.current_liquidacion["liquido"] = float(self.current_liquidacion["recaudacion"])-float(self.current_liquidacion["gastos"])
-        self.current_liquidacion["entrega"] = float(self.current_liquidacion["liquido"])-float(self.current_liquidacion["h13"])-float(self.current_liquidacion["credito"])
+        self.current_liquidacion["aportes"] = float(self.current_liquidacion["salario"]) * APORTE
+        self.current_liquidacion["sub_total"] = float(self.current_liquidacion["liquido"])+float(self.current_liquidacion["aportes"])
+        self.current_liquidacion["entrega"] = float(self.current_liquidacion["sub_total"])-float(self.current_liquidacion["h13"])-float(self.current_liquidacion["credito"])
 
-        with rx.session(url="mysql+pymysql://root:Admin@localhost:3306/taxidb") as session:
+        with rx.session(url="mysql+pymysql://avnadmin:AVNS_0wDZLak0nK19kamQus8@dbliqudiaciones-admtaxi.b.aivencloud.com:16928/defaultdb?") as session:
             if session.exec(
-                select(Liquidacion).where(Liquidacion.movil == self.current_liquidacion["movil"])
+                select(Liquidaciones).where(Liquidaciones.movil == self.current_liquidacion["movil"])
             ).first():
                 return rx.window_alert("Liquidacion con este movil already exists")
-            session.add(Liquidacion(**self.current_liquidacion))
+            session.add(Liquidaciones(**self.current_liquidacion))
             session.commit()
         self.load_entries()
-        return rx.toast.info(f"Liquidación {self.current_liquidacion['id']} has been added.", variant="outline", position="bottom-right")
+        return rx.toast.info(f"Liquidación {self.current_liquidacion['chofer']} has been added.", variant="outline", position="bottom-right")
 
 
     def update_customer_to_db(self, form_data: dict):
         self.current_liquidacion.update(form_data)
-        with rx.session(url="mysql+pymysql://root:Admin@localhost:3306/taxidb") as session:
+        with rx.session(url="mysql+pymysql://avnadmin:AVNS_0wDZLak0nK19kamQus8@dbliqudiaciones-admtaxi.b.aivencloud.com:16928/defaultdb?") as session:
             liquidacion = session.exec(
-                select(Liquidacion).where(Liquidacion.id == self.current_liquidacion["id"])
+                select(Liquidaciones).where(Liquidaciones.chofer == self.current_liquidacion["chofer"])
             ).first()
-            for field in Liquidacion.get_fields():
-                if field != "id":
+            for field in Liquidaciones.get_fields():
+                if field != "chofer":
                     setattr(liquidacion, field, self.current_liquidacion[field])
             session.add(liquidacion)
             session.commit()
         self.load_entries()
-        return rx.toast.info(f"Liquidacion {self.current_liquidacion['id']} has been modified.", variant="outline", position="bottom-right")
+        return rx.toast.info(f"Liquidacion {self.current_liquidacion['chofer']} has been modified.", variant="outline", position="bottom-right")
 
 
-    def delete_customer(self, id: int):
+    def delete_customer(self, chofer: int):
         """Borrar una liquidación de la base de datos."""
-        with rx.session(url="mysql+pymysql://root:Admin@localhost:3306/taxidb") as session:
-            liquidacion = session.exec(select(Liquidacion).where(Liquidacion.id == id)).first()
+        with rx.session(url="mysql+pymysql://avnadmin:AVNS_0wDZLak0nK19kamQus8@dbliqudiaciones-admtaxi.b.aivencloud.com:16928/defaultdb?") as session:
+            liquidacion = session.exec(select(Liquidaciones).where(Liquidaciones.chofer == chofer)).first()
             session.delete(liquidacion)
             session.commit()
         self.load_entries()
-        return rx.toast.info(f"User {liquidacion.id} has been deleted.", variant="outline", position="bottom-right")
+        return rx.toast.info(f"User {liquidacion.chofer} has been deleted.", variant="outline", position="bottom-right")
     
     
 
-    
     # @rx.var(cache=True)
     # def payments_change(self) -> float:
     #     return _get_percentage_change(self.current_month_values.total_payments, self.previous_month_values.total_payments)

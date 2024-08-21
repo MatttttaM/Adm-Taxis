@@ -1,16 +1,17 @@
 import reflex as rx
 
 from ..constants import Encabezado
-from ..backend.backend import Liquidacion, State, Liquidacion
+from ..backend.backend import Liquidaciones, State, Liquidaciones
 from ..components.form_field import form_field
 from ..components.estado_badges import estado_badge
 
 
-def show_customer(liquidacion: Liquidacion):
+def show_customer(liquidacion: Liquidaciones):
     """Show a customer in a table row."""
 
     return rx.table.row(
-        rx.table.cell(liquidacion.id),
+        rx.table.cell(liquidacion.cod_id),
+        rx.table.cell(liquidacion.chofer),
         rx.table.cell(liquidacion.movil),
         rx.table.cell(liquidacion.recaudacion),
         rx.table.cell(liquidacion.salario),
@@ -36,7 +37,7 @@ def show_customer(liquidacion: Liquidacion):
                 update_customer_dialog(liquidacion),
                 rx.icon_button(
                     rx.icon("trash-2", size=22),
-                    on_click=lambda: State.delete_customer(getattr(liquidacion, "id")),
+                    on_click=lambda: State.delete_customer(getattr(liquidacion, "chofer")),
                     size="2",
                     variant="solid",
                     color_scheme="red",
@@ -138,39 +139,6 @@ def add_customer_button() -> rx.Component:
                             Encabezado.CREDITO.value["var"],
                             Encabezado.CREDITO.value["icono"],
                         ),
-
-
-                    # rx.flex(
-                    #     # Name
-                    #     form_field(
-                    #         "Nombre",
-                    #         "Customer Name",
-                    #         "text",
-                    #         "name",
-                    #         "user",
-                    #     ),
-                    #     # Email
-                    #     form_field(
-                    #         "Email", "user@reflex.dev", "email", "email", "mail"
-                    #     ),
-                    #     # Phone
-                    #     form_field("Phone", "Customer Phone", "tel", "phone", "phone"),
-                    #     # Address
-                    #     form_field(
-                    #         "Address",
-                    #         "Customer Address",
-                    #         "text",
-                    #         "address",
-                    #         "home"
-                    #     ),
-                    #     # Payments
-                    #     form_field(
-                    #         "Payment ($)",
-                    #         "Customer Payment",
-                    #         "number",
-                    #         "Total",
-                    #         "dollar-sign",
-                    #     ),
 
                         # Estado
                         rx.vstack(
@@ -276,7 +244,7 @@ def update_customer_dialog(liquidacion):
                             Encabezado.CHOFER.value["type"],
                             Encabezado.CHOFER.value["var"],
                             Encabezado.CHOFER.value["icono"],
-                            liquidacion.id.to(str),
+                            liquidacion.chofer.to(str),
                         ),
                         form_field(
                             Encabezado.MOVIL.value["titulo"],
@@ -427,7 +395,7 @@ def main_table():
             ),
             ### Botón para ordenar según las opciones
             rx.select(
-                ["id", "movil", "recaudacion", "salario", "gastos", "fecha", "estado"],    # opciones
+                ["chofer", "movil", "recaudacion", "salario", "gastos", "fecha", "estado"],    # opciones
                 placeholder="Sort By: Name",
                 size="3",
                 on_change=lambda sort_value: State.sort_values(sort_value),
@@ -453,6 +421,7 @@ def main_table():
         rx.table.root(
             rx.table.header(
                 rx.table.row(
+                    _header_cell(Encabezado.COD_ID.value["titulo"], Encabezado.COD_ID.value["icono"]),
                     _header_cell(Encabezado.CHOFER.value["titulo"], Encabezado.CHOFER.value["icono"]),
                     _header_cell(Encabezado.MOVIL.value["titulo"], Encabezado.MOVIL.value["icono"]),
                     _header_cell(Encabezado.RECAUDACION.value["titulo"], Encabezado.RECAUDACION.value["icono"]),

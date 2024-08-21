@@ -1,2 +1,5 @@
-reflex>=0.5.3
-psycopg2-binary
+dnspython==1.16.0
+psycopg2-binary==2.9.9
+pylance==0.16.1
+PyMySQL==1.1.1
+reflex==0.5.9
