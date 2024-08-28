@@ -40,15 +40,19 @@ connection = pymysql.connect(
 # finally:
 #     connection.close()
 
-#cursor.execute("ALTER TABLE liquidaciones ADD COLUMN aportes INTEGER after salario;")
-#cursor.execute("ALTER TABLE liquidaciones ADD COLUMN sub_total DECIMAL(10,2) AFTER salario;")
-
 
 cursor = connection.cursor()
+
+#cursor.execute("ALTER TABLE liquidaciones ADD COLUMN aportes INTEGER after salario;")
+#cursor.execute("ALTER TABLE liquidaciones ADD COLUMN sub_total DECIMAL(10,2) AFTER salario;")
 #cursor.execute("ALTER TABLE liquidaciones modify sub_total DECIMAL(10,2) AFTER aportes;")
 #cursor.execute("ALTER TABLE liquidaciones modify aportes DECIMAL(10,2) AFTER liquido ;")
+#cursor.execute("ALTER TABLE liquidaciones ADD COLUMN cod_id 
 #cursor.execute("SELECT * FROM liquidaciones;")
 #print(cursor.fetchall())
 #connection.commit()
-cursor.execute("TRUNCATE TABLE liquidaciones")
+#cursor.execute("ALTER TABLE liquidaciones DROP PRIMARY KEY, ADD PRIMARY KEY (cod_id);")
+#cursor.execute("TRUNCATE TABLE liquidaciones")
+
+
 connection.commit()

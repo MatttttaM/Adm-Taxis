@@ -6,8 +6,8 @@ from ..components.form_field import form_field
 from ..components.estado_badges import estado_badge
 
 
-def show_customer(liquidacion: Liquidaciones):
-    """Show a customer in a table row."""
+def show_liquidacion(liquidacion: Liquidaciones):
+    """Ver las liquidaciones en una tabla."""
 
     return rx.table.row(
         rx.table.cell(liquidacion.cod_id),
@@ -19,6 +19,8 @@ def show_customer(liquidacion: Liquidaciones):
         rx.table.cell(liquidacion.extras),
         rx.table.cell(liquidacion.gastos),
         rx.table.cell(liquidacion.liquido),
+        rx.table.cell(liquidacion.aportes),
+        rx.table.cell(liquidacion.sub_total),
         rx.table.cell(liquidacion.h13),
         rx.table.cell(liquidacion.credito),
         rx.table.cell(liquidacion.entrega),
@@ -26,18 +28,18 @@ def show_customer(liquidacion: Liquidaciones):
         rx.table.cell(
             rx.match(
                 liquidacion.estado,
-                ("Delivered", estado_badge("Delivered")),
-                ("Pending", estado_badge("Pending")),
-                ("Cancelled", estado_badge("Cancelled")),
-                estado_badge("Pending"),
+                ("Entregada", estado_badge("Entregada")),
+                ("Pendiente", estado_badge("Pendiente")),
+                ("Movil Parado", estado_badge("Movil Parado")),
+                estado_badge("Pendingggggg"),
             )
         ),
         rx.table.cell(
             rx.hstack(
-                update_customer_dialog(liquidacion),
+                update_liquidacion_dialog(liquidacion),
                 rx.icon_button(
                     rx.icon("trash-2", size=22),
-                    on_click=lambda: State.delete_customer(getattr(liquidacion, "chofer")),
+                    on_click=lambda: State.delete_liquidacion(getattr(liquidacion, "cod_id")),
                     size="2",
                     variant="solid",
                     color_scheme="red",
@@ -49,8 +51,8 @@ def show_customer(liquidacion: Liquidaciones):
     )
 
 
-### Botón "+ Add Liquidacion"
-def add_customer_button() -> rx.Component:
+def add_liquidacion_button() -> rx.Component:
+    """Botón '+ Add Liquidacion'"""
     return rx.dialog.root(
         rx.dialog.trigger(
             rx.button(
@@ -69,12 +71,12 @@ def add_customer_button() -> rx.Component:
                 ),
                 rx.vstack(
                     rx.dialog.title(
-                        "Add New Customer",
+                        "Agregar una nueva liquidacion",
                         weight="bold",
                         margin="0",
                     ),
                     rx.dialog.description(
-                        "Fill the form with the customer's info",
+                        "Completa la información para crear una nueva liquidación",
                     ),
                     spacing="1",
                     height="100%",
@@ -149,7 +151,7 @@ def add_customer_button() -> rx.Component:
                                 spacing="2",
                             ),
                             rx.radio(
-                                ["Entregada", "Pendiente", "Movil parado"],
+                                ["Entregada", "Pendiente", "Movil Parado"],
                                 name="estado",
                                 direction="row",
                                 as_child=True,
@@ -178,8 +180,8 @@ def add_customer_button() -> rx.Component:
                         mt="4",
                         justify="end",
                     ),
-                    ### LLama a la función add_customer_to_db para cargar la liquidación
-                    on_submit=State.add_customer_to_db,
+                    # LLama a la función add_liquidacion_to_db para cargar la liquidación
+                    on_submit=State.add_liquidacion_to_db,
                     reset_on_submit=False,
                 ),
                 width="100%",
@@ -194,8 +196,8 @@ def add_customer_button() -> rx.Component:
     )
 
 
-### Botón de "Editar" una liquidación
-def update_customer_dialog(liquidacion):
+# Botón de "Editar" una liquidación
+def update_liquidacion_dialog(liquidacion):
     return rx.dialog.root(
         rx.dialog.trigger(
             rx.button(
@@ -236,24 +238,8 @@ def update_customer_dialog(liquidacion):
             ),
             rx.flex(
                 rx.form.root(
-                    ### Ventana que se abre para "Editar" una liquidación
+                    # Ventana que se abre para "Editar" una liquidación
                     rx.flex(
-                        form_field(
-                            Encabezado.CHOFER.value["titulo"],
-                            Encabezado.CHOFER.value["desc"],
-                            Encabezado.CHOFER.value["type"],
-                            Encabezado.CHOFER.value["var"],
-                            Encabezado.CHOFER.value["icono"],
-                            liquidacion.chofer.to(str),
-                        ),
-                        form_field(
-                            Encabezado.MOVIL.value["titulo"],
-                            Encabezado.MOVIL.value["desc"],
-                            Encabezado.MOVIL.value["type"],
-                            Encabezado.MOVIL.value["var"],
-                            Encabezado.MOVIL.value["icono"],
-                            liquidacion.movil.to(str),
-                        ),
                         form_field(
                             Encabezado.RECAUDACION.value["titulo"],
                             Encabezado.RECAUDACION.value["desc"],
@@ -311,7 +297,7 @@ def update_customer_dialog(liquidacion):
                                 spacing="2",
                             ),
                             rx.radio(
-                                ["Entregada", "Pendiente", "Movil parado"],
+                                ["Entregada", "Pendiente", "Movil Parado"],
                                 default_value=liquidacion.estado,
                                 name="estado",
                                 direction="row",
@@ -341,8 +327,8 @@ def update_customer_dialog(liquidacion):
                         mt="4",
                         justify="end",
                     ),
-                    ### LLama a la función update_customer_to_db para actualizar la liquidación
-                    on_submit=State.update_customer_to_db,
+                    # LLama a la función update_liquidacion_to_db para actualizar la liquidación
+                    on_submit=State.update_liquidacion_to_db,
                     reset_on_submit=False,
                 ),
             ),
@@ -370,12 +356,12 @@ def _header_cell(text: str, icon: str):
 
 def main_table():
     return rx.fragment(
-        ### Primera línea de objetos
+        # Primera línea de objetos
         rx.flex(
-            ### Botón de añadir liquidación
-            add_customer_button(),
+            # Botón de añadir liquidación
+            add_liquidacion_button(),
             rx.spacer(),
-            ### Botón para ordenar
+            # Botón para ordenar
             rx.cond(
                 State.sort_reverse,
                 rx.icon(
@@ -393,14 +379,14 @@ def main_table():
                     on_click=State.toggle_sort,
                 ),
             ),
-            ### Botón para ordenar según las opciones
+            # Botón para ordenar según las opciones
             rx.select(
-                ["chofer", "movil", "recaudacion", "salario", "gastos", "fecha", "estado"],    # opciones
+                ["cod_id", "chofer", "movil", "recaudacion", "salario", "gastos", "fecha", "estado"],    # opciones
                 placeholder="Sort By: Name",
                 size="3",
                 on_change=lambda sort_value: State.sort_values(sort_value),
             ),
-            ### Botón para buscar
+            # Botón para buscar
             rx.input(
                 rx.input.slot(rx.icon("search")),
                 placeholder="Buscar...",
@@ -417,7 +403,7 @@ def main_table():
             width="100%",
             padding_bottom="1em",
         ),
-        ### Tabla principal
+        # Tabla principal
         rx.table.root(
             rx.table.header(
                 rx.table.row(
@@ -430,6 +416,8 @@ def main_table():
                     _header_cell(Encabezado.EXTRAS.value["titulo"], Encabezado.EXTRAS.value["icono"]),
                     _header_cell(Encabezado.GASTOS.value["titulo"], Encabezado.GASTOS.value["icono"]),
                     _header_cell(Encabezado.LIQUIDO.value["titulo"], Encabezado.LIQUIDO.value["icono"]),
+                    _header_cell(Encabezado.APORTES.value["titulo"], Encabezado.APORTES.value["icono"]),
+                    _header_cell(Encabezado.SUB_TOTAL.value["titulo"], Encabezado.SUB_TOTAL.value["icono"]),
                     _header_cell(Encabezado.H13.value["titulo"], Encabezado.H13.value["icono"]),
                     _header_cell(Encabezado.CREDITO.value["titulo"], Encabezado.CREDITO.value["icono"]),
                     _header_cell(Encabezado.ENTREGA.value["titulo"], Encabezado.ENTREGA.value["icono"]),
@@ -438,8 +426,8 @@ def main_table():
                     _header_cell(Encabezado.ACCION.value["titulo"], Encabezado.ACCION.value["icono"]),
                 ),
             ),
-            ### Muestra los datos de la tabla
-            rx.table.body(rx.foreach(State.liquidaciones, show_customer)),
+            # Muestra los datos de la tabla
+            rx.table.body(rx.foreach(State.liquidaciones, show_liquidacion)),
             variant="surface",
             size="3",
             width="100%",
