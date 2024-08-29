@@ -1,7 +1,7 @@
 from enum import Enum
 import pytz
 
-class Encabezado(Enum):
+class Columna(Enum):
     COD_ID = {"var": "cod_id", "titulo": "Código", "icono": "scan-barcode", "desc": "Código de Liquidación", "type": "string"}
     CHOFER = {"var": "chofer", "titulo": "Chofer", "icono": "user", "desc": "Número de Chofer", "type": "number"}
     MOVIL = {"var": "movil", "titulo": "Móvil", "icono": "car-taxi-front", "desc": "STX0000", "type": "number"}
@@ -28,6 +28,8 @@ SALARIO = 0.29
 
 DB_URL = "mysql+pymysql://avnadmin:AVNS_0wDZLak0nK19kamQus8@dbliqudiaciones-admtaxi.b.aivencloud.com:16928/defaultdb?"
 
+
+COLOR_PRINCIPAL = "amber"
 
 # Obtener la zona horaria de Montevideo
 TZ = pytz.timezone('America/Montevideo')

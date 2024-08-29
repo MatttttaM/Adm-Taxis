@@ -6,7 +6,7 @@ def navbar():
         rx.badge(
             rx.icon(tag="table-2", size=28),
             rx.heading("Adm de Taxis App", size="6"),
-            color_scheme="green",
+            color_scheme="amber",
             radius="large",
             align="center",
             variant="surface",

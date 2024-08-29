@@ -4,7 +4,7 @@ from sqlmodel import Field, select, asc, desc, or_, func, cast, String
 from datetime import datetime, timedelta
 
 from taxi.constants import APORTE, SALARIO, TZ
-
+from .notificaciones import send_email
 
 
 # def _get_percentage_change(value: Union[int, float], prev_value: Union[int, float]) -> float:
@@ -149,6 +149,18 @@ class State(rx.State):
         self.current_liquidacion = liquidacion
 
 
+    def verifica_recaudacion(self, current_liquidacion):
+        recaudacion = float(current_liquidacion["recaudacion"])
+        if recaudacion > 15000:
+            subject = "Recaudación Alta"
+            body = f"El chofer {current_liquidacion['chofer']} ha realizado una recaudación de {recaudacion}."
+            send_email(subject, body, to_email="mattbarbr@hotmail.com")
+        elif recaudacion < 2000:
+            subject = "Recaudación Baja"
+            body = f"El chofer {current_liquidacion['chofer']} ha realizado una recaudación de {recaudacion}."
+            send_email(subject, body, to_email="mattbarbr@hotmail.com")
+
+
     def calculos_to_db(self, current_liquidacion: dict):
         """Calcula los valores de las columnas a partir de los valores ingresados"""
         self.current_liquidacion["salario"] = float(self.current_liquidacion["recaudacion"]) * SALARIO
@@ -166,6 +178,9 @@ class State(rx.State):
         self.current_liquidacion["fecha"] = datetime.now(TZ).strftime("%Y/%m/%d %H:%M:%S")
         self.current_liquidacion["cod_id"] = "C"+str(self.current_liquidacion['chofer'])+"_"+"M"+str(self.current_liquidacion['movil'])+"_"+str(self.current_liquidacion['fecha'][2:10])
         
+
+        self.verifica_recaudacion(self.current_liquidacion)
+
         # Llamada a la función de cálculos
         self.current_liquidacion = self.calculos_to_db(self.current_liquidacion)
 

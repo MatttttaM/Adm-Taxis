@@ -3,6 +3,8 @@ from .components.stats_cards import stats_cards_group
 from .views.navbar import navbar
 from .views.table import main_table
 
+from .constants import COLOR_PRINCIPAL
+
 
 def index() -> rx.Component:
     return rx.vstack(
@@ -20,9 +22,10 @@ def index() -> rx.Component:
 
 app = rx.App(
     theme=rx.theme(
-        appearance="dark", has_background=True, radius="large", accent_color="grass"
+        appearance="dark", has_background=True, radius="large", accent_color=COLOR_PRINCIPAL
     ),
 )
+
 
 app.add_page(
     index,
