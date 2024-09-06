@@ -3,4 +3,4 @@ psycopg2-binary==2.9.9
 pylance==0.16.1
 PyMySQL==1.1.1
 pytz==2024.1
-reflex==0.5.9
+reflex==0.5.10

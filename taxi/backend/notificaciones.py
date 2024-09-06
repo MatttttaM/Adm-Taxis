@@ -29,5 +29,3 @@ def send_email(subject: str, body: str, to_email: str):
     server.send_message(message) 
     # Close connection to server 
     server.quit()
-
-

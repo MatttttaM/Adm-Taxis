@@ -1,7 +1,6 @@
-from dataclasses import field
 import reflex as rx
-from sqlmodel import Field, select, asc, desc, or_, func, cast, String
-from datetime import datetime, timedelta
+from sqlmodel import Field, select, asc, desc, or_, cast, String
+from datetime import datetime
 
 from taxi.constants import APORTE, SALARIO, TZ
 from .notificaciones import send_email

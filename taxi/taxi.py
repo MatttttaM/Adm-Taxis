@@ -1,34 +1,33 @@
 import reflex as rx
-from .components.stats_cards import stats_cards_group
-from .views.navbar import navbar
-from .views.table import main_table
 
-from .constants import COLOR_PRINCIPAL
-
-
-def index() -> rx.Component:
-    return rx.vstack(
-        navbar(),
-        # stats_cards_group(),
-        rx.box(
-            main_table(),
-            width="100%",
-        ),
-        width="100%",
-        spacing="6",
-        padding_x=["1.5em", "1.5em", "3em"],
-    )
+from taxi.pages.home import home_page
+from taxi.pages.about import about_page
+from taxi.pages.index import otro_page
+from taxi.pages.profile import profile_page
+from taxi.pages.settings import settings_page
+from taxi.pages.table import table_page
 
 
+from .pages import *
+from . import styles
+
+
+#Create the app.
 app = rx.App(
-    theme=rx.theme(
-        appearance="dark", has_background=True, radius="large", accent_color=COLOR_PRINCIPAL
-    ),
+    style=styles.base_style,
+    stylesheets=styles.base_stylesheets,
+    title="Dashboard Template",
+    description="A dashboard template for Reflex.",
+    theme=rx.theme(appearance="dark", has_background=True, radius="large", accent_color="blue"),
 )
 
+app.add_page(otro_page)
+app.add_page(home_page)
+app.add_page(about_page)
+app.add_page(profile_page)
+app.add_page(settings_page)
+app.add_page(table_page)
 
-app.add_page(
-    index,
-    title="Administrador de Taxis",
-    description="A simple app to manage taxis data.",
-)
+# Ejecutar la aplicación
+if __name__ == "__main__":
+    app.run()
