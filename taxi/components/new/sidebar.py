@@ -1,5 +1,6 @@
 """Sidebar component for the app."""
 
+from taxi.constants import Paginas
 from ... import styles
 
 import reflex as rx
@@ -78,9 +79,9 @@ def sidebar_item(text: str, url: str) -> rx.Component:
                 text,
                 ("Overview", sidebar_item_icon("home")),
                 ("Table", sidebar_item_icon("table-2")),
-                ("About", sidebar_item_icon("book-open")),
                 ("Profile", sidebar_item_icon("user")),
                 ("Settings", sidebar_item_icon("settings")),
+                ("About", sidebar_item_icon("book-open")),
                 sidebar_item_icon("layout-dashboard"),
             ),
             rx.text(text, size="3", weight="regular"),
@@ -133,11 +134,12 @@ def sidebar() -> rx.Component:
     # The ordered page routes.
     ordered_page_routes = [
         "/",
+        Paginas.LIQUIDACION.value["url"],
         "/table",
-        "/about",
         "/account",
         "/profile",
-        "/settings",
+        "/settings"
+        "/about",
     ]
 
     # Get the decorated pages.

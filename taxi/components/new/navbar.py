@@ -4,6 +4,8 @@ from taxi import styles
 
 import reflex as rx
 
+from taxi.constants import Paginas
+
 
 def menu_item_icon(icon: str) -> rx.Component:
     return rx.icon(icon, size=20)
@@ -107,11 +109,13 @@ def menu_button() -> rx.Component:
 
     # The ordered page routes.
     ordered_page_routes = [
-        "/",
-        "/table",
-        "/about",
-        "/profile",
-        "/settings",
+        # "/",
+        Paginas.LIQUIDACION.value["url"],
+        Paginas.TABLA.value["url"],
+        Paginas.GASTOS.value["url"],
+        Paginas.USUARIOS.value["url"],
+        Paginas.CONFIGURACION.value["url"],
+        Paginas.ABOUT.value["url"],
     ]
 
     # Get the decorated pages.
@@ -184,11 +188,11 @@ def navbar() -> rx.Component:
                 rx.image(src="/reflex_white.svg", height="1em"),
             ),
             rx.spacer(),
-            menu_button(),
+            menu_button(),  # Menu de la sidebar
             align="center",
             width="100%",
             padding_y="1.25em",
-            padding_x=["1em", "1em", "2em"],
+            padding_x=["1em", "1em", "0.5em"],
         ),
         display=["block", "block", "block", "block", "block", "none"],
         position="sticky",

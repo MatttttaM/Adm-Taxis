@@ -1,6 +1,7 @@
 """The overview page of the app."""
 import reflex as rx
 
+from taxi.constants import Graficos
 from taxi.templates.template import template
 from .. import styles
 from ..views.new.stats_cards import stats_cards
@@ -74,9 +75,9 @@ def otro_page() -> rx.Component:
             rx.hstack(
                 tab_content_header(),
                 rx.segmented_control.root(
-                    rx.segmented_control.item("Users", value="users"),
-                    rx.segmented_control.item("Revenue", value="revenue"),
-                    rx.segmented_control.item("Orders", value="orders"),
+                    rx.segmented_control.item(Graficos.CHOFERES.value["titulo"], value=Graficos.CHOFERES.value["icono"]),
+                    rx.segmented_control.item(Graficos.MOVILES.value["titulo"], value=Graficos.MOVILES.value["icono"]),
+                    rx.segmented_control.item(Graficos.RECAUDACIONES.value["titulo"], value=Graficos.RECAUDACIONES.value["icono"]),
                     margin_bottom="1.5em",
                     default_value="users",
                     on_change=StatsState.set_selected_tab,
@@ -86,9 +87,9 @@ def otro_page() -> rx.Component:
             ),
             rx.match(
                 StatsState.selected_tab,
-                ("users", users_chart()),
-                ("revenue", revenue_chart()),
-                ("orders", orders_chart()),
+                ("asdaw", users_chart()),
+                (Graficos.MOVILES.value["icono"], revenue_chart()),
+                (Graficos.RECAUDACIONES.value["icono"], orders_chart()),
             ),
         ),
         rx.grid(

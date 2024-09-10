@@ -5,6 +5,8 @@ from reflex.components.radix.themes.base import (
     LiteralAccentColor,
 )
 
+from taxi.constants import Graficos
+
 
 class StatsState(rx.State):
     area_toggle: bool = True
@@ -49,7 +51,7 @@ class StatsState(rx.State):
                     "Date": (
                         datetime.datetime.now() - datetime.timedelta(days=i)
                     ).strftime("%m-%d"),
-                    "Users": random.randint(100, 500),
+                    "asdasdas": random.randint(100, 500),
                 }
             )
 
@@ -133,7 +135,7 @@ def users_chart() -> rx.Component:
                 stroke_dasharray="3 3",
             ),
             rx.recharts.area(
-                data_key="Users",
+                data_key="asddsa",
                 stroke=rx.color("blue", 9),
                 fill="url(#colorBlue)",
                 type_="monotone",
@@ -150,7 +152,7 @@ def users_chart() -> rx.Component:
             ),
             _custom_tooltip("blue"),
             rx.recharts.bar(
-                data_key="Users",
+                data_key="asd",
                 stroke=rx.color("blue", 9),
                 fill=rx.color("blue", 7),
             ),

@@ -1,5 +1,6 @@
 import reflex as rx
 
+from taxi.pages.liquidacion import liquidacion_page
 from taxi.pages.home import home_page
 from taxi.pages.about import about_page
 from taxi.pages.index import otro_page
@@ -16,11 +17,12 @@ from . import styles
 app = rx.App(
     style=styles.base_style,
     stylesheets=styles.base_stylesheets,
-    title="Dashboard Template",
-    description="A dashboard template for Reflex.",
+    title="Adm taxis",
+    description="Prototipo de app para adm de taxis",
     theme=rx.theme(appearance="dark", has_background=True, radius="large", accent_color="blue"),
 )
 
+app.add_page(liquidacion_page)
 app.add_page(otro_page)
 app.add_page(home_page)
 app.add_page(about_page)
