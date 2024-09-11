@@ -1,9 +1,12 @@
 import reflex as rx
+
+from taxi.constants import Graficos
 from ... import styles
 
 from reflex.components.radix.themes.base import LiteralAccentColor
 
 
+# Tarjetas de estadisticas
 def stats_card(
     stat_name: str,
     value: int,
@@ -12,6 +15,7 @@ def stats_card(
     icon_color: LiteralAccentColor,
     extra_char: str = "",
 ) -> rx.Component:
+    
     percentage_change = (
         round(((value - prev_value) / prev_value) * 100, 2)
         if prev_value != 0
@@ -77,28 +81,30 @@ def stats_card(
         box_shadow=styles.box_shadow_style,
     )
 
+
+# Implementacion
 def stats_cards() -> rx.Component:
     return rx.grid(
         stats_card(
-            stat_name="Users",
+            stat_name=Graficos.CHOFERES.value["titulo"],
             value=4200,
             prev_value=3000,
-            icon="users",
+            icon=Graficos.CHOFERES.value["icono"],
             icon_color="blue",
         ),
         stats_card(
-            stat_name="Revenue",
+            stat_name=Graficos.MOVILES.value["titulo"],
             value=12000,
             prev_value=15000,
-            icon="dollar-sign",
+            icon=Graficos.MOVILES.value["icono"],
             icon_color="green",
             extra_char="$",
         ),
         stats_card(
-            stat_name="Orders",
+            stat_name=Graficos.LIQUIDACIONES.value["titulo"],
             value=300,
             prev_value=250,
-            icon="shopping-cart",
+            icon=Graficos.LIQUIDACIONES.value["icono"],
             icon_color="purple",
         ),
         gap="1rem",

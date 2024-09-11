@@ -133,8 +133,9 @@ def sidebar() -> rx.Component:
 
     # The ordered page routes.
     ordered_page_routes = [
-        "/",
+        #"/",
         Paginas.LIQUIDACION.value["url"],
+        Paginas.GASTOS.value["url"],
         "/table",
         "/account",
         "/profile",

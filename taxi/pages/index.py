@@ -77,7 +77,7 @@ def otro_page() -> rx.Component:
                 rx.segmented_control.root(
                     rx.segmented_control.item(Graficos.CHOFERES.value["titulo"], value=Graficos.CHOFERES.value["icono"]),
                     rx.segmented_control.item(Graficos.MOVILES.value["titulo"], value=Graficos.MOVILES.value["icono"]),
-                    rx.segmented_control.item(Graficos.RECAUDACIONES.value["titulo"], value=Graficos.RECAUDACIONES.value["icono"]),
+                    rx.segmented_control.item(Graficos.LIQUIDACIONES.value["titulo"], value=Graficos.LIQUIDACIONES.value["icono"]),
                     margin_bottom="1.5em",
                     default_value="users",
                     on_change=StatsState.set_selected_tab,
@@ -89,7 +89,7 @@ def otro_page() -> rx.Component:
                 StatsState.selected_tab,
                 ("asdaw", users_chart()),
                 (Graficos.MOVILES.value["icono"], revenue_chart()),
-                (Graficos.RECAUDACIONES.value["icono"], orders_chart()),
+                (Graficos.LIQUIDACIONES.value["icono"], orders_chart()),
             ),
         ),
         rx.grid(

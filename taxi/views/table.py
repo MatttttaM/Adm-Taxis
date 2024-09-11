@@ -1,7 +1,7 @@
 import reflex as rx
 
 from ..constants import COLOR_PRINCIPAL, Columna
-from ..backend.backend import Liquidaciones, State, Liquidaciones
+from ..backend.backend import Liquidaciones, State
 from ..components.form_field import form_field
 from ..components.estado_badges import estado_badge
 

@@ -1,6 +1,7 @@
 from enum import Enum
 import pytz
 
+
 class Columna(Enum):
     COD_ID = {"var": "cod_id", "titulo": "Código", "icono": "scan-barcode", "desc": "Código de Liquidación", "type": "string"}
     CHOFER = {"var": "chofer", "titulo": "Chofer", "icono": "user", "desc": "Número de Chofer", "type": "number"}
@@ -22,16 +23,17 @@ class Columna(Enum):
 
 
 class Graficos(Enum):
-    CHOFERES = {"titulo": "Choferes","icono": "circle-user"}
-    MOVILES = {"titulo": "Moviles","icono": "car-taxi-front"}
-    RECAUDACIONES = {"titulo": "Recaudaciones","icono": "revenue"}
+    CHOFERES = {"titulo": "Choferes", "icono": "circle-user"}
+    MOVILES = {"titulo": "Moviles", "icono": "car-taxi-front"}
+    LIQUIDACIONES = {"titulo": "Liquidaciones", "icono": "dollar-sign"}
+
 
 # Graficos.CHOFERES.value["titulo"]
 # Graficos.CHOFERES.value["icono"]
 # Graficos.MOVILES.value["titulo"]
 # Graficos.MOVILES.value["icono"]
-# Graficos.RECAUDACIONES.value["titulo"]
-# Graficos.RECAUDACIONES.value["icono"]
+# Graficos.LIQUIDACIONES.value["titulo"]
+# Graficos.LIQUIDACIONES.value["icono"]
 
 
 class Paginas(Enum):
@@ -68,3 +70,6 @@ COLOR_PRINCIPAL = "amber"
 
 # Obtener la zona horaria de Montevideo
 TZ = pytz.timezone('America/Montevideo')
+
+
+# print(type(styles.accent_color))

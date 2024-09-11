@@ -4,7 +4,7 @@ import reflex as rx
 
 from taxi.templates.template import template
 from ..backend.table_state import TableState
-from ..views.table import main_table
+from ..views.tabla_nueva import main_table
 
 
 @template(route="/table",title="Table",description="tablessss askfjañglka",on_load=TableState.load_entries)

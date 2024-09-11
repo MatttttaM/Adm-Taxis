@@ -1,7 +1,7 @@
 import reflex as rx
 
 from taxi.pages.liquidacion import liquidacion_page
-from taxi.pages.home import home_page
+from taxi.pages.gastos import gastos_page
 from taxi.pages.about import about_page
 from taxi.pages.index import otro_page
 from taxi.pages.profile import profile_page
@@ -23,12 +23,13 @@ app = rx.App(
 )
 
 app.add_page(liquidacion_page)
+app.add_page(table_page)
 app.add_page(otro_page)
-app.add_page(home_page)
+#app.add_page(home_page)
+app.add_page(gastos_page)
 app.add_page(about_page)
 app.add_page(profile_page)
 app.add_page(settings_page)
-app.add_page(table_page)
 
 # Ejecutar la aplicación
 if __name__ == "__main__":

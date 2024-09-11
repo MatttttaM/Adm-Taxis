@@ -15,7 +15,7 @@ hover_accent_bg = {"_hover": {"background_color": accent_color}}
 content_width_vw = "90vw"
 sidebar_width = "32em"
 sidebar_content_width = "16em"
-max_width = "1480px"
+max_width = "auto"
 color_box_size = ["2.25rem", "2.25rem", "2.5rem"]
 
 
@@ -28,6 +28,7 @@ template_content_style = {
     "padding": "1em",
     "margin_bottom": "2em",
     "min_height": "90vh",
+    "max_height": "auto",
 }
 
 link_style = {
