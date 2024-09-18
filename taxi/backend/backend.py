@@ -71,29 +71,29 @@ class State(rx.State):
 
 
     def load_entries(self) -> list[Liquidaciones]:
-            """Get all recaudaciones from the database."""
-            with rx.session(url="mysql+pymysql://avnadmin:AVNS_0wDZLak0nK19kamQus8@dbliqudiaciones-admtaxi.b.aivencloud.com:16928/defaultdb?") as session:
-                query = select(Liquidaciones)
-                if self.search_value:
-                    search_value = f"%{str(self.search_value).lower()}%"
-                    query = query.where(
-                        or_(
-                            *[
-                                getattr(Liquidaciones, field).ilike(search_value)
-                                for field in Liquidaciones.__fields__
-                                if field not in ["chofer"]
-                            ],
-                            # ensures that movil is cast to a string before applying the ilike operator
-                            cast(Liquidaciones.movil, String).ilike(search_value)
-                        )
+        """Get all recaudaciones from the database."""
+        with rx.session(url="mysql+pymysql://avnadmin:AVNS_0wDZLak0nK19kamQus8@dbliqudiaciones-admtaxi.b.aivencloud.com:16928/defaultdb?") as session:
+            query = select(Liquidaciones)
+            if self.search_value:
+                search_value = f"%{str(self.search_value).lower()}%"
+                query = query.where(
+                    or_(
+                        *[
+                            getattr(Liquidaciones, field).ilike(search_value)
+                            for field in Liquidaciones.__fields__
+                            if field not in ["chofer"]
+                        ],
+                        # ensures that movil is cast to a string before applying the ilike operator
+                        cast(Liquidaciones.movil, String).ilike(search_value)
                     )
+                )
 
-                if self.sort_value:
-                    sort_column = getattr(Liquidaciones, self.sort_value)
-                    order = desc(sort_column) if self.sort_reverse else asc(sort_column)
-                    query = query.order_by(order)
+            if self.sort_value:
+                sort_column = getattr(Liquidaciones, self.sort_value)
+                order = desc(sort_column) if self.sort_reverse else asc(sort_column)
+                query = query.order_by(order)
 
-                self.liquidaciones = session.exec(query).all()
+            self.liquidaciones = session.exec(query).all()
 
     #         self.get_current_month_values()
     #         self.get_previous_month_values()

@@ -3,8 +3,8 @@ from typing import List
 from sqlmodel import Field, select, asc, desc, or_, cast, String
 from datetime import datetime
 import csv
-from taxi.constants import APORTE, SALARIO, TZ
 from .notificaciones import send_email
+from ..constants import APORTE, DB_URL, LIMITE_FILAS, SALARIO, TZ
 
 
 # class Item(rx.Base):
@@ -40,63 +40,118 @@ class Liquidaciones(rx.Model, table=True):
 
 class TableState(rx.State):
     """Estado principal para la tabla y gestión de liquidaciones."""
+
     liquidaciones: List[Liquidaciones] = []
+    
     search_value: str = ""
     sort_value: str = ""
     sort_reverse: bool = False
+
     total_liquidacioness: int = 0
     offset: int = 0
-    limit: int = 12  # Límite de filas por página
+    limite_filas: int = LIMITE_FILAS  # por página
     current_liquidacion: Liquidaciones = Liquidaciones()
 
     @rx.var(cache=True)
-    def filtered_sorted_liquidacioness(self) -> List[Liquidaciones]:
+    def filtered_sorted_liquidaciones(self) -> List[Liquidaciones]:
         """Ordena y filtra las liquidaciones según el valor de búsqueda y orden."""
-        liquidaciones = self.liquidaciones
+        with rx.session(url="mysql+pymysql://avnadmin:AVNS_0wDZLak0nK19kamQus8@dbliqudiaciones-admtaxi.b.aivencloud.com:16928/defaultdb?") as session:
+            query = select(Liquidaciones)
 
-        # Ordenar por el valor de la columna seleccionada
-        if self.sort_value:
-            sort_column = getattr(Liquidaciones, self.sort_value)
-            order = desc(sort_column) if self.sort_reverse else asc(sort_column)
-            liquidaciones = sorted(
-                liquidaciones,
-                key=lambda liquidaciones: getattr(liquidaciones, self.sort_value),
-                reverse=self.sort_reverse,
-            )
+            # Filtrar por valor de búsqueda
+            if self.search_value:
+                search_value = f"%{self.search_value.lower()}%"
+                query = query.filter(
+                    or_(
+                        Liquidaciones.cod_id.ilike(search_value),
+                        Liquidaciones.chofer.ilike(search_value),
+                        Liquidaciones.movil.ilike(search_value),
+                        Liquidaciones.recaudacion.ilike(search_value),
+                        Liquidaciones.salario.ilike(search_value),
+                        Liquidaciones.gastos.ilike(search_value),
+                        Liquidaciones.fecha.ilike(search_value),
+                        Liquidaciones.estado.ilike(search_value)
+                    )
+                )
 
-        # Filtrar por valor de búsqueda
-        if self.search_value:
-            search_value = self.search_value.lower()
-            liquidaciones = [
-                liquidacion for liquidacion in liquidaciones
-                if any(search_value in str(getattr(liquidacion, attr)).lower()
-                for attr in ["chofer", "movil", "recaudacion", "estado"])
-            ]
+            # Ordenar por el valor de la columna seleccionada
+            if self.sort_value:
+                sort_column = getattr(Liquidaciones, self.sort_value)
+                order = desc(sort_column) if self.sort_reverse else asc(sort_column)
+                query = query.order_by(order)
+            
+            # Ejecutar la consulta y obtener los resultados
+            liquidaciones = session.exec(query).all()
 
         return liquidaciones
 
-    @rx.var(cache=True)
-    def total_pages(self) -> int:
-        return (self.total_liquidacioness // self.limit) + (1 if self.total_liquidacioness % self.limit else 0)
+        #     # Ordenar por el valor de la columna seleccionada
+        #     if self.sort_value:
+        #         sort_column = getattr(Liquidaciones, self.sort_value)
+        #         order = desc(sort_column) if self.sort_reverse else asc(sort_column)
+        #         query = query.order_by(order)
+        #         liquidaciones = sorted(
+        #             liquidaciones,
+        #             key=lambda liquidaciones: getattr(liquidaciones, self.sort_value),
+        #             reverse=self.sort_reverse,
+        #         )
+
+        #     # Filtrar por valor de búsqueda
+        #     if self.search_value:
+        #         search_value = self.search_value.lower()
+        #         liquidaciones = [
+        #             liquidacion for liquidacion in liquidaciones
+        #             if any(search_value in str(getattr(liquidacion, attr)).lower()
+        #                 for attr in ["cod_id", "chofer", "movil", "recaudacion", "salario", "gastos", "fecha", "estado"])    # opciones
+        #         ]
+        # return liquidaciones
 
     @rx.var(cache=True)
-    def get_current_page(self) -> List[Liquidaciones]:
+    def page_number(self) -> int:
+        """Obtiene el numero de pagina."""
+        return (self.offset // self.limite_filas) + 1
+
+    @rx.var(cache=True)
+    def total_pages(self) -> int:
+        """Obtiene el total de paginas."""
+        return (self.total_liquidacioness // self.limite_filas) + (1 if self.total_liquidacioness % self.limite_filas else 0)
+
+    @rx.var(cache=True, initial_value=[])
+    def get_current_page(self) -> list[Liquidaciones]:
         """Obtiene los elementos de la página actual."""
         start_index = self.offset
-        end_index = start_index + self.limit
-        return self.filtered_sorted_liquidacioness[start_index:end_index]
+        end_index = start_index + self.limite_filas
+
+        return self.filtered_sorted_liquidaciones[start_index:end_index]
 
     def prev_page(self):
         if self.offset > 0:
-            self.offset -= self.limit
+            self.offset -= self.limite_filas
 
     def next_page(self):
-        if self.offset + self.limit < self.total_liquidacioness:
-            self.offset += self.limit
+        if self.offset + self.limite_filas < self.total_liquidacioness:
+            self.offset += self.limite_filas
+
+    def first_page(self):
+        self.offset = 0
+
+    def last_page(self):
+        self.offset = (self.total_pages - 1) * self.limite_filas
+
+    def toggle_sort(self):
+        self.sort_reverse = not self.sort_reverse
+        self.load_entries()
+
+    def get_liquidacion(self, liquidacion: Liquidaciones):
+        self.current_liquidacion = liquidacion
+
+    def sort_values(self, sort_value: str):
+        self.sort_value = sort_value
+        self.load_entries()
 
     def load_entries(self):
         """Carga las liquidaciones desde la base de datos."""
-        with rx.session(url="mysql+pymysql://<user>:<password>@<host>/defaultdb") as session:
+        with rx.session(url="mysql+pymysql://avnadmin:AVNS_0wDZLak0nK19kamQus8@dbliqudiaciones-admtaxi.b.aivencloud.com:16928/defaultdb?") as session:
             query = select(Liquidaciones)
             if self.search_value:
                 search_value = f"%{self.search_value.lower()}%"
@@ -106,11 +161,13 @@ class TableState(rx.State):
                         for field in Liquidaciones.__fields__]
                     )
                 )
+
             if self.sort_value:
                 sort_column = getattr(Liquidaciones, self.sort_value)
                 query = query.order_by(desc(sort_column) if self.sort_reverse else asc(sort_column))
             self.liquidaciones = session.exec(query).all()
             self.total_liquidacioness = len(self.liquidaciones)
+
 
     def add_liquidacion(self, form_data: dict):
         """Agrega una nueva liquidación a la base de datos."""

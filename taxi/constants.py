@@ -65,6 +65,9 @@ SALARIO = 0.29
 
 DB_URL = "mysql+pymysql://avnadmin:AVNS_0wDZLak0nK19kamQus8@dbliqudiaciones-admtaxi.b.aivencloud.com:16928/defaultdb?"
 
+LIMITE_FILAS = 12
+
+OPCIONES_FILTRO = ["cod_id", "chofer", "movil", "recaudacion", "salario", "gastos", "fecha", "estado"]
 
 COLOR_PRINCIPAL = "amber"
 

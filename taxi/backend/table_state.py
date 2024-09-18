@@ -3,9 +3,9 @@ from typing import Union, List
 import csv
 
 
-import logging
+#import logging
 
-logging.basicConfig(level=logging.DEBUG)
+#logging.basicConfig(level=logging.DEBUG)
 
 class Item(rx.Base):
     """The item class."""
